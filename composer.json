@@ -10,7 +10,7 @@
 	],
 	"require": {
 		"php": "^8.0",
-		"baraja-core/structured-api": "^2.4"
+		"baraja-core/structured-api": "^3.0"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "^0.12.74",
