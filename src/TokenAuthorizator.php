@@ -27,25 +27,33 @@ final class TokenAuthorizator implements MatchExtension
 
 
 	/**
-	 * @param mixed[] $params
+	 * @param array<string|int, mixed> $params
 	 */
 	public function beforeProcess(Endpoint $endpoint, array $params, string $action, string $method): ?Response
 	{
 		if ($this->strategy->isActive() === false) {
 			return null;
 		}
+		$token = $params['token'] ?? null;
+		if ($token === null) {
+			throw new \InvalidArgumentException('Parameter "token" is required.');
+		}
+		if (is_string($token) === false) {
+			throw new \InvalidArgumentException(sprintf('Parameter "token" must be string, but type "%s" given.', get_debug_type($token)));
+		}
 		try {
 			$docComment = trim((string) (new \ReflectionClass($endpoint))->getDocComment());
-			if (preg_match('/@public(?:$|\s|\n)/', $docComment)) {
+			if (preg_match('/@public(?:$|\s|\n)/', $docComment) === 1) {
 				return null;
 			}
 		} catch (\ReflectionException $e) {
-			throw new \InvalidArgumentException('Endpoint "' . \get_class($endpoint) . '" can not be reflected: ' . $e->getMessage(), $e->getCode(), $e);
+			throw new \InvalidArgumentException(
+				sprintf('Endpoint "%s" can not be reflected: %s', $endpoint::class, $e->getMessage()),
+				500,
+				$e,
+			);
 		}
-		if (isset($params['token']) === false) {
-			throw new \InvalidArgumentException('Parameter "token" is required.');
-		}
-		if ($this->strategy->verify($params['token'])) {
+		if ($this->strategy->verify($token)) {
 			return null;
 		}
 		throw new \InvalidArgumentException('Token is invalid or expired, please contact your administrator.');
@@ -53,7 +61,7 @@ final class TokenAuthorizator implements MatchExtension
 
 
 	/**
-	 * @param mixed[] $params
+	 * @param array<string|int, mixed> $params
 	 */
 	public function afterProcess(Endpoint $endpoint, array $params, ?Response $response): ?Response
 	{

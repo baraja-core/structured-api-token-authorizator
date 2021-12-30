@@ -34,7 +34,7 @@ final class TokenAuthorizatorExtension extends CompilerExtension
 
 	public function beforeCompile(): void
 	{
-		/** @var mixed[] $config */
+		/** @var array{token: string|null} $config */
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 

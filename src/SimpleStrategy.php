@@ -7,12 +7,9 @@ namespace Baraja\TokenAuthorizator;
 
 final class SimpleStrategy implements VerificationStrategy
 {
-	private ?string $token;
-
-
-	public function __construct(?string $token)
-	{
-		$this->token = $token;
+	public function __construct(
+		private ?string $token,
+	) {
 	}
 
 
