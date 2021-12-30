@@ -14,8 +14,11 @@ final class TokenAuthorizator implements MatchExtension
 	private VerificationStrategy $strategy;
 
 
-	public function __construct(?string $secret, ?VerificationStrategy $strategy = null)
+	public function __construct(?VerificationStrategy $strategy = null, ?string $secret = null)
 	{
+		if ($strategy === null && $secret === null) {
+			throw new \LogicException('Please define Verification strategy or secret token in your configuration.');
+		}
 		$this->strategy = $strategy ?? new SimpleStrategy($secret);
 	}
 
