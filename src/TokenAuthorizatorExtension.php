@@ -18,7 +18,7 @@ final class TokenAuthorizatorExtension extends CompilerExtension
 	/**
 	 * @return string[]
 	 */
-	public static function mustBeDefinedBefore(): array
+	public static function mustBeDefinedAfter(): array
 	{
 		return [ApiExtension::class];
 	}
