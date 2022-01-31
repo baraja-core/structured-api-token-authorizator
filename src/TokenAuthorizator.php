@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Baraja\TokenAuthorizator;
 
 
+use Baraja\StructuredApi\Attributes\PublicEndpoint;
 use Baraja\StructuredApi\Endpoint;
 use Baraja\StructuredApi\Middleware\MatchExtension;
 use Baraja\StructuredApi\Response;
@@ -44,10 +45,17 @@ final class TokenAuthorizator implements MatchExtension
 		if (is_string($token) === false) {
 			throw new \InvalidArgumentException(sprintf('Parameter "token" must be string, but type "%s" given.', get_debug_type($token)));
 		}
+		$requireToken = false;
 		try {
-			$docComment = trim((string) (new \ReflectionClass($endpoint))->getDocComment());
+			$ref = new \ReflectionClass($endpoint);
+			$docComment = trim((string) $ref->getDocComment());
 			if (preg_match('/@public(?:$|\s|\n)/', $docComment) === 1) {
 				return null;
+			}
+			foreach ($ref->getAttributes(PublicEndpoint::class) as $publicEndpointAttribute) {
+				if (($publicEndpointAttribute->getArguments()['requireToken'] ?? false) === true) {
+					$requireToken = true;
+				}
 			}
 		} catch (\ReflectionException $e) {
 			throw new \InvalidArgumentException(
@@ -56,7 +64,7 @@ final class TokenAuthorizator implements MatchExtension
 				$e,
 			);
 		}
-		if ($this->strategy->verify($token)) {
+		if ($requireToken === false || $this->strategy->verify($token)) {
 			return null;
 		}
 		throw new \InvalidArgumentException('Token is invalid or expired, please contact your administrator.');

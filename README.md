@@ -54,6 +54,22 @@ tokenAuthorizator:
 
 This configuration accepts requests as: `/api/v1/user?token=abcd`.
 
+Token verification at the endpoint level
+----------------------------------------
+
+Token usage is verified at the endpoint level. By default, all endpoints have access enabled and are governed by the `PublicEndpoint` attribute defined by the baraja-core/structured-api package.
+
+If you want to require token authentication in your endpoint, set the attribute directly above the endpoint definition.
+
+For example:
+
+```php
+#[PublicEndpoint(requireToken: true)]
+class ArticleEndpoint extends BaseEndpoint
+{
+}
+```
+
 Custom authentication
 ---------------------
 
