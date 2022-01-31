@@ -47,7 +47,6 @@ final class TokenAuthorizator implements MatchExtension
 				return null;
 			}
 			foreach ($ref->getAttributes(PublicEndpoint::class) as $publicEndpointAttribute) {
-				bdump($publicEndpointAttribute->getArguments());
 				if (($publicEndpointAttribute->getArguments()['requireToken'] ?? false) === true) {
 					$requireToken = true;
 				}
