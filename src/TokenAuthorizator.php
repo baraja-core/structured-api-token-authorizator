@@ -38,13 +38,7 @@ final class TokenAuthorizator implements MatchExtension
 		if ($this->strategy->isActive() === false) {
 			return null;
 		}
-		$token = $params['token'] ?? null;
-		if ($token === null) {
-			throw new \InvalidArgumentException('Parameter "token" is required.');
-		}
-		if (is_string($token) === false) {
-			throw new \InvalidArgumentException(sprintf('Parameter "token" must be string, but type "%s" given.', get_debug_type($token)));
-		}
+
 		$requireToken = false;
 		try {
 			$ref = new \ReflectionClass($endpoint);
@@ -53,6 +47,7 @@ final class TokenAuthorizator implements MatchExtension
 				return null;
 			}
 			foreach ($ref->getAttributes(PublicEndpoint::class) as $publicEndpointAttribute) {
+				bdump($publicEndpointAttribute->getArguments());
 				if (($publicEndpointAttribute->getArguments()['requireToken'] ?? false) === true) {
 					$requireToken = true;
 				}
@@ -64,6 +59,15 @@ final class TokenAuthorizator implements MatchExtension
 				$e,
 			);
 		}
+
+		$token = $params['token'] ?? null;
+		if ($token === null && $requireToken === true) {
+			throw new \InvalidArgumentException('Parameter "token" is required.');
+		}
+		if (is_string($token) === false && $requireToken === true) {
+			throw new \InvalidArgumentException(sprintf('Parameter "token" must be string, but type "%s" given.', get_debug_type($token)));
+		}
+
 		if ($requireToken === false || $this->strategy->verify($token)) {
 			return null;
 		}
