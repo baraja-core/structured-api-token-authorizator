@@ -38,7 +38,7 @@ final class TokenAuthorizator implements MatchExtension
 		if (
 			$this->strategy->isActive() === false
 			|| $this->isPublicAccess($endpoint)
-			|| $this->isTokenOk()
+			|| $this->isTokenOk($params['token'] ?? null)
 		) {
 			return null;
 		}
@@ -73,9 +73,8 @@ final class TokenAuthorizator implements MatchExtension
 	}
 
 
-	private function isTokenOk(): bool
+	private function isTokenOk(mixed $token): bool
 	{
-		$token = $params['token'] ?? null;
 		if ($token === null) {
 			throw new \InvalidArgumentException('Parameter "token" is required.');
 		}
