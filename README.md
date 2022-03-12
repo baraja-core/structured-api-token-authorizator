@@ -7,6 +7,21 @@ A simple token authorizer for authenticating HTTP requests.
 
 This package is the official extension for the [Baraja Structured API](https://github.com/baraja-core/structured-api).
 
+📦 Installation
+---------------
+
+It's best to use [Composer](https://getcomposer.org) for installation, and you can also find the package on
+[Packagist](https://packagist.org/packages/baraja-core/structured-api-token-authorizator) and
+[GitHub](https://github.com/baraja-core/structured-api-token-authorizator).
+
+To install, simply use the command:
+
+```shell
+$ composer require baraja-core/structured-api-token-authorizator
+```
+
+You can use the package manually by creating an instance of the internal classes, or register a DIC extension to link the services directly to the Nette Framework.
+
 Simple usage
 ------------
 
@@ -38,6 +53,22 @@ tokenAuthorizator:
 ```
 
 This configuration accepts requests as: `/api/v1/user?token=abcd`.
+
+Token verification at the endpoint level
+----------------------------------------
+
+Token usage is verified at the endpoint level. By default, all endpoints have access enabled and are governed by the `PublicEndpoint` attribute defined by the baraja-core/structured-api package.
+
+If you want to require token authentication in your endpoint, set the attribute directly above the endpoint definition.
+
+For example:
+
+```php
+#[PublicEndpoint(requireToken: true)]
+class ArticleEndpoint extends BaseEndpoint
+{
+}
+```
 
 Custom authentication
 ---------------------

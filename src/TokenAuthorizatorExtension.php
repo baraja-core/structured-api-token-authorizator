@@ -18,7 +18,7 @@ final class TokenAuthorizatorExtension extends CompilerExtension
 	/**
 	 * @return string[]
 	 */
-	public static function mustBeDefinedBefore(): array
+	public static function mustBeDefinedAfter(): array
 	{
 		return [ApiExtension::class];
 	}
@@ -34,7 +34,7 @@ final class TokenAuthorizatorExtension extends CompilerExtension
 
 	public function beforeCompile(): void
 	{
-		/** @var mixed[] $config */
+		/** @var array{token: string|null} $config */
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 
